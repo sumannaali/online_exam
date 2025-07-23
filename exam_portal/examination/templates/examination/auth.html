@@ -1,101 +1,152 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Authentication</title>
-  <style>
-    body {
-      margin: 0; padding: 0; height: 100vh;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      display: flex; justify-content: center; align-items: center;
-      position: relative; overflow: hidden;
-    }
-    .section {
-      width: 400px; background: #ffffffee;
-      padding: 40px 30px; border-radius: 12px;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-      z-index: 2; position: relative;
-    }
-    .bg {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background-size: cover; background-position: center; z-index: 1;
-    }
-    .login-bg { background-image: url('https://wallpaperaccess.com/full/1900852.jpg'); }
-    .register-bg { background-image: url('https://tse3.mm.bing.net/th/id/OIP.BwaGCCpZt7yaHQ_onqzcNAAAAA?pid=ImgDet&w=184&h=188&c=7&dpr=1.3&o=7&rm=3'); }
-    .otp-bg { background-image: url('https://th.bing.com/th/id/OIP.ndgjuGlzO1HN4uzvyk3VzQHaE8?w=241&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7'); }
-    h2 { text-align: center; margin-bottom: 20px; color: #333; }
-    input, select { width: 100%; padding: 12px; margin: 10px 0 20px 0;
-      border: 1px solid #ccc; border-radius: 5px; font-size: 15px; }
-    button { width: 100%; padding: 12px; background: #007bff; color: #fff;
-      border: none; border-radius: 5px; cursor: pointer; font-size: 16px; }
-    button:hover { background: #0056b3; }
-    .message { color: green; text-align: center; }
-    .error { color: red; text-align: center; }
-    .link { text-align: center; margin-top: 15px; }
-    .link a { color: #007bff; text-decoration: none; }
-    .link a:hover { text-decoration: underline; }
-  </style>
+    <meta charset="UTF-8">
+    <title>Student Exam Portal - Auth</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-image: url("https://images.unsplash.com/photo-1522202176988-66273c2fd55f");
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            color: white;
+        }
+
+        .auth-container {
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 30px;
+            border-radius: 15px;
+        }
+
+        .form-toggle {
+            cursor: pointer;
+            color: #0dcaf0;
+            text-decoration: underline;
+        }
+
+        input, label, select {
+            color: white;
+        }
+    </style>
 </head>
+<body>
+    <div class="container h-100 d-flex align-items-center justify-content-center">
+        <div class="col-md-6 auth-container">
 
-<body class="{% if show_login %}login-bg{% else %}{% if show_register %}register-bg{% else %}{% if show_otp %}otp-bg{% endif %}{% endif %}{% endif %}">
+            <h2 class="text-center mb-4">Student Exam Portal</h2>
 
-<div class="section">
+            <!-- Toggle Buttons -->
+            <div class="text-center mb-3">
+                <span class="form-toggle me-3" onclick="showForm('login')">Login</span>
+                <span class="form-toggle me-3" onclick="showForm('register')">Register</span>
+                <span class="form-toggle" onclick="showForm('otp')">Verify OTP</span>
+            </div>
 
-  {% if messages %}
-    {% for message in messages %}
-      <p class="{% if message.tags == 'error' %}error{% else %}message{% endif %}">{{ message }}</p>
-    {% endfor %}
-  {% endif %}
+            <!-- Login Form -->
+            <form id="login-form" method="POST" action="{% url 'login' %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="login-username">Username</label>
+                    <input type="text" class="form-control" id="login-username" name="username" required>
+                </div>
+                <div class="mb-3">
+                    <label for="login-password">Password</label>
+                    <input type="password" class="form-control" id="login-password" name="password" required>
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </div>
+            </form>
 
-  {% if show_login %}
-    <!-- LOGIN FORM -->
-    <h2>Login</h2>
-    <form method="post">
-      {% csrf_token %}
-      <input type="text" name="username" placeholder="Username" >
-      <input type="password" name="password" placeholder="Password" >
-      <button type="submit">Login</button>
-    </form>
-    <div class="link">
-      <a href="{% url 'register' %}">Don't have an account? Register</a>
+            <!-- Register Form -->
+            <form id="register-form" method="POST" action="{% url 'register' %}" style="display: none;">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="reg-username">Username</label>
+                    <input type="text" class="form-control" id="reg-username" name="username" required>
+                </div>
+                <div class="mb-3">
+                    <label for="reg-email">Email</label>
+                    <input type="email" class="form-control" id="reg-email" name="email" required>
+                </div>
+                <div class="mb-3">
+                    <label for="reg-password">Password</label>
+                    <input type="password" class="form-control" id="reg-password" name="password" required>
+                </div>
+                <div class="mb-3">
+                    <label for="reg-role">Role</label>
+                    <select class="form-select" name="role" id="reg-role" required>
+                        <option value="">-- Select Role --</option>
+                        <option value="student">Student</option>
+                        <option value="invigilator">Invigilator</option>
+                    </select>
+                </div>
+                <div class="d-grid mb-2">
+                    <button type="submit" class="btn btn-success">Register & Send OTP</button>
+                </div>
+            </form>
+
+            <!-- OTP Verification Form -->
+            <form id="otp-form" method="POST" action="{% url 'verify_otp' %}" style="display: none;">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="otp">Enter OTP sent to your Email</label>
+                    <input type="text" class="form-control" id="otp" name="otp" required>
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-warning">Verify OTP</button>
+                </div>
+            </form>
+
+        </div>
     </div>
 
-  {% else %}
-    {% if show_register %}
-      <!-- REGISTER FORM -->
-      <h2>Register</h2>
-      <form method="post">
+    <script>
+        function showForm(formName) {
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('register-form').style.display = 'none';
+            document.getElementById('otp-form').style.display = 'none';
+
+            if (formName === 'login') {
+                document.getElementById('login-form').style.display = 'block';
+            } else if (formName === 'register') {
+                document.getElementById('register-form').style.display = 'block';
+            } else if (formName === 'otp') {
+                document.getElementById('otp-form').style.display = 'block';
+            }
+        }
+    </script>
+</body>
+</html>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+</head>
+<body>
+    <h2>Login Page</h2>
+
+    <form method="POST">
         {% csrf_token %}
-        <input type="text" name="username" placeholder="Username" required />
-        <input type="email" name="email" placeholder="Email" required />
-        <input type="password" name="password1" placeholder="Password" required />
-        <select name="role" required>
-          <option value="">Select Role</option>
-          <option value="student">Student</option>
-          <option value="teacher">Teacher</option>
-          <option value="admin">Admin</option>
-        </select>
-        <input type="text" name="phone" placeholder="Phone Number" required />
-        <button type="submit">Register</button>
-      </form>
-      <div class="link">
-        <a href="{% url 'login' %}">Already have an account? Login</a>
-      </div>
+        <label>Username:</label><br>
+        <input type="text" name="username" required><br><br>
 
-    {% else %}
-      {% if show_otp %}
-        <!-- OTP VERIFY FORM -->
-        <h2>Verify OTP</h2>
-        <form method="post">
-          {% csrf_token %}
-          <input type="text" name="otp" placeholder="Enter OTP" >
-          <button type="submit">Verify OTP</button>
-        </form>
-      {% endif %}
+        <label>Password:</label><br>
+        <input type="password" name="password" required><br><br>
+
+        <button type="submit">Login</button>
+    </form>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p style="color:red;">{{ message }}</p>
+        {% endfor %}
     {% endif %}
-  {% endif %}
-
-</div>
-
 </body>
 </html>

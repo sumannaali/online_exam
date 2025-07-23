@@ -1,5 +1,5 @@
 """
-URL configuration for exam_portal project.
+URL configuration for examportal project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.2/topics/http/urls/
@@ -15,9 +15,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path,include
+from django.urls import path, include
+from examination import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('examination.urls'))
+    path('', views.home, name='home'), 
+     path('login/', views.login_view, name='login'),  # ✅ this line fixes your error
+    path('teacher-login/', views.teacher_login_view, name='teacher_login'), # ✅ Function must exist in views.py
 ]

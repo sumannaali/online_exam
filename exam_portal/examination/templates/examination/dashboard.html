@@ -1,0 +1,13 @@
+<!-- exam/templates/dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+</head>
+<body>
+    <h2>Welcome to your dashboard!</h2>
+    <p>Hello {{ request.user.username }}.</p>
+    <a href="{% url 'logout' %}">Logout</a>
+</body>
+</html>

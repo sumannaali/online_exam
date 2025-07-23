@@ -1,9 +1,3 @@
-from django.shortcuts import render
-from django.http import HttpResponse
-
-# Create your views here.
-def home(request):
-    return HttpResponse('hello. world')
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
@@ -11,6 +5,8 @@ from django.contrib import messages
 from .models import Profile
 from django.core.mail import send_mail
 import random
+from django.http import HttpResponse
+
 
 def login_view(request):
     return HttpResponse("Login page")
@@ -51,7 +47,7 @@ def login_view(request):
         else:
             messages.error(request, "Invalid username or password.")
 
-    return render(request, 'exam/auth.html', {'show_login': True})
+    return render(request, 'examination/auth.html', {'show_login': True})
 
 # ✅ REGISTER VIEW
 def register_view(request):
@@ -70,7 +66,7 @@ def register_view(request):
             messages.success(request, "Registration successful! Please log in.")
             return redirect('login')
 
-    return render(request, 'exam/auth.html', {'show_register': True})
+    return render(request, 'examination/auth.html', {'show_register': True})
 
 # ✅ VERIFY OTP VIEW
 def verify_otp_view(request):
@@ -85,15 +81,29 @@ def verify_otp_view(request):
         else:
             messages.error(request, "Invalid OTP. Please try again.")
 
-    return render(request, 'exam/auth.html', {'show_otp': True})
+    return render(request, 'examination/auth.html', {'show_otp': True})
+def teacher_login_view(request):
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None and hasattr(user, 'profile') and user.profile.role == 'teacher':
+            login(request, user)
+            return redirect('dashboard')
+        else:
+            messages.error(request, "Invalid teacher credentials.")
+
+    return render(request, 'examination/teacher_login.html')
+
 
 # ✅ HOME VIEW
 def home(request):
-    return render(request, 'exam/home.html')
+    return render(request, 'examination/home.html')
 
 # ✅ DASHBOARD VIEW
 def dashboard_view(request):
-    return render(request, 'exam/dashboard.html')
+    return render(request, 'examination/dashboard.html')
 
 # ✅ LOGOUT VIEW
 def logout_view(request):
@@ -102,13 +112,22 @@ def logout_view(request):
 
 # ✅ QUESTION LIST VIEW
 def question_list(request):
-    return render(request, 'exam/question_list.html')
+    return render(request, 'examination/question_list.html')
 
 # ✅ EXAM QUESTIONS VIEW
 def exam_questions(request, exam_id):
     context = {'exam_id': exam_id}
-    return render(request, 'exam/exam_questions.html', context)
+    return render(request, 'examination/exam_questions.html', context)
 
 # ✅ AUTH SUCCESS VIEW
 def auth_success_view(request):
-    return render(request, 'exam/auth_success.html')
+    return render(request, 'examination/auth_success.html')
+
+def login_view(request):
+    return HttpResponse("Login Page")
+
+def login_view(request):
+    return render(request, 'examination/auth.html', {'show_login': True})
+
+
+
